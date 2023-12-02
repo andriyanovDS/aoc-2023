@@ -1,11 +1,8 @@
+use crate::read_input::read_input;
 use anyhow::Result;
-use std::{
-    fs::File,
-    io::{BufRead, BufReader, Lines},
-};
 
 pub fn first_part() -> Result<()> {
-    let lines = input_lines()?;
+    let lines = read_input("day1")?;
     let sum = lines.fold(0, |acc, line| {
         let line = line.expect("Failed to read line");
         let left = line
@@ -25,7 +22,7 @@ pub fn first_part() -> Result<()> {
 }
 
 pub fn second_part() -> Result<()> {
-    let lines = input_lines()?;
+    let lines = read_input("day1")?;
     let sum = lines.fold(0, |acc, line| {
         let line = line.expect("Failed to read line");
         let left = find_digit(line.as_str());
@@ -102,14 +99,4 @@ fn contains_rev(chars: impl Iterator<Item = char>, str: &str) -> bool {
         .rev()
         .zip(chars)
         .all(|(left, right)| left == right)
-}
-
-fn input_lines() -> Result<Lines<BufReader<File>>> {
-    let mut input_path = std::env::current_dir()?;
-    input_path.push("src");
-    input_path.push("day1");
-    input_path.push("input.txt");
-
-    let input = std::fs::File::open(&input_path)?;
-    Ok(BufReader::new(input).lines())
 }
