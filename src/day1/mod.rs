@@ -35,7 +35,7 @@ pub fn second_part() -> Result<()> {
 
 fn find_digit(line: &str) -> u32 {
     for (index, char) in line.chars().enumerate() {
-        if char.is_digit(10) {
+        if char.is_ascii_digit() {
             return char.to_digit(10).unwrap();
         }
         if let Some(digit) = is_digit(&line[index..]) {
@@ -64,7 +64,7 @@ fn is_digit(str: &str) -> Option<u32> {
 fn find_digit_rev(line: &str) -> u32 {
     let end_index = line.len();
     for (index, char) in line.chars().rev().enumerate() {
-        if char.is_digit(10) {
+        if char.is_ascii_digit() {
             return char.to_digit(10).unwrap();
         }
         if let Some(digit) = is_digit_rev(&line[..end_index - index]) {

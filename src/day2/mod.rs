@@ -1,6 +1,5 @@
-use anyhow::Result;
-
 use crate::read_input::read_input;
+use anyhow::Result;
 
 const RED_CUBES: usize = 12;
 const GREEN_CUBES: usize = 13;
@@ -43,7 +42,7 @@ struct Game {
 impl From<&str> for Game {
     fn from(value: &str) -> Self {
         let (id, subsets) = value[5..].split_once(": ").expect("Incorrect format.");
-        let subsets = subsets.split(";");
+        let subsets = subsets.split(';');
         let mut game = Self {
             red: 0,
             green: 0,
@@ -51,9 +50,9 @@ impl From<&str> for Game {
             id: id.parse().expect("ID must be an integer."),
         };
         for subset in subsets {
-            let passes = subset.split(",");
+            let passes = subset.split(',');
             for pass in passes {
-                let (count, color) = pass.trim().split_once(" ").expect("Incorrect format.");
+                let (count, color) = pass.trim().split_once(' ').expect("Incorrect format.");
                 let count = count.parse::<usize>().expect("Incorrect count");
                 match color {
                     "red" => game.red = game.red.max(count),
