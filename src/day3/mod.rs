@@ -68,13 +68,11 @@ fn sum_of_numbers_adjustent_to_symbol(numbers: &[Number], symbols: &[Vec<Symbol>
             if number.row + 1 < symbols.len() {
                 lines.push(&symbols[number.row + 1]);
             }
-            for line in lines {
-                if line.binary_search_by(|s| compare(number, s)).is_ok() {
-                    println!("Num found {}, {:?}", number.number, number.colums);
-                    return Some(number.number);
-                }
-            }
-            None
+            lines.iter().find_map(|line| {
+                line.binary_search_by(|s| compare(number, s))
+                    .ok()
+                    .map(|_| number.number)
+            })
         })
         .sum()
 }
