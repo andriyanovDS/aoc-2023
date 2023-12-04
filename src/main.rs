@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 mod read_input;
 
 fn main() -> anyhow::Result<()> {
@@ -19,6 +20,8 @@ fn main() -> anyhow::Result<()> {
         ("2", "2") => day2::second_part(),
         ("3", "1") => day3::first_part(),
         ("3", "2") => day3::second_part(),
+        ("4", "1") => day4::first_part(),
+        ("4", "2") => day4::second_part(),
         _ => panic!("Challge was not done yet!"),
     }
 }
