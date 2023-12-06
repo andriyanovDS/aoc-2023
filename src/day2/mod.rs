@@ -1,35 +1,37 @@
-use crate::read_input::read_input;
+use crate::{day_solution::DaySolution, read_input::read_input};
 use anyhow::Result;
 
 const RED_CUBES: usize = 12;
 const GREEN_CUBES: usize = 13;
 const BLUE_CUBES: usize = 14;
 
-pub fn first_part() -> Result<()> {
-    let input = read_input("day2")?;
-    let mut sum = 0;
-    for line in input {
-        let line = line?;
-        let game = Game::from(line.as_str());
-        if game.is_valid(RED_CUBES, GREEN_CUBES, BLUE_CUBES) {
-            sum += game.id;
-        }
-    }
-    println!("Sum of ids: {sum}");
-    Ok(())
-}
+pub struct SecondDaySolution;
 
-pub fn second_part() -> Result<()> {
-    let input = read_input("day2")?;
-    let mut sum = 0;
-    for line in input {
-        let line = line?;
-        let game = Game::from(line.as_str());
-        let power = game.blue * game.green * game.red;
-        sum += power;
+impl DaySolution for SecondDaySolution {
+    fn first_part() -> Result<String> {
+        let input = read_input("day2")?;
+        let mut sum = 0;
+        for line in input {
+            let line = line?;
+            let game = Game::from(line.as_str());
+            if game.is_valid(RED_CUBES, GREEN_CUBES, BLUE_CUBES) {
+                sum += game.id;
+            }
+        }
+        Ok(format!("Sum of ids: {sum}"))
     }
-    println!("Sum of ids: {sum}");
-    Ok(())
+
+    fn second_part() -> Result<String> {
+        let input = read_input("day2")?;
+        let mut sum = 0;
+        for line in input {
+            let line = line?;
+            let game = Game::from(line.as_str());
+            let power = game.blue * game.green * game.red;
+            sum += power;
+        }
+        Ok(format!("Sum of ids: {sum}"))
+    }
 }
 
 struct Game {

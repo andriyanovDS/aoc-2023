@@ -1,36 +1,38 @@
-use crate::read_input::read_input;
+use crate::{day_solution::DaySolution, read_input::read_input};
 use anyhow::Result;
 
-pub fn first_part() -> Result<()> {
-    let lines = read_input("day1")?;
-    let sum = lines.fold(0, |acc, line| {
-        let line = line.expect("Failed to read line");
-        let left = line
-            .chars()
-            .find_map(|char| char.to_digit(10))
-            .expect("String must contains two digits");
-        let right = line
-            .chars()
-            .rev()
-            .find_map(|char| char.to_digit(10))
-            .expect("String must contains two digits");
+pub struct FirstDaySolution;
 
-        acc + left * 10 + right
-    });
-    println!("Sum: {sum}");
-    Ok(())
-}
+impl DaySolution for FirstDaySolution {
+    fn first_part() -> Result<String> {
+        let lines = read_input("day1")?;
+        let sum = lines.fold(0, |acc, line| {
+            let line = line.expect("Failed to read line");
+            let left = line
+                .chars()
+                .find_map(|char| char.to_digit(10))
+                .expect("String must contains two digits");
+            let right = line
+                .chars()
+                .rev()
+                .find_map(|char| char.to_digit(10))
+                .expect("String must contains two digits");
 
-pub fn second_part() -> Result<()> {
-    let lines = read_input("day1")?;
-    let sum = lines.fold(0, |acc, line| {
-        let line = line.expect("Failed to read line");
-        let left = find_digit(line.as_str());
-        let right = find_digit_rev(line.as_str());
-        acc + left * 10 + right
-    });
-    println!("Sum: {sum}");
-    Ok(())
+            acc + left * 10 + right
+        });
+        Ok(format!("Sum: {sum}"))
+    }
+
+    fn second_part() -> Result<String> {
+        let lines = read_input("day1")?;
+        let sum = lines.fold(0, |acc, line| {
+            let line = line.expect("Failed to read line");
+            let left = find_digit(line.as_str());
+            let right = find_digit_rev(line.as_str());
+            acc + left * 10 + right
+        });
+        Ok(format!("Sum: {sum}"))
+    }
 }
 
 fn find_digit(line: &str) -> u32 {

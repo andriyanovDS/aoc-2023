@@ -1,4 +1,4 @@
-use crate::read_input::read_input;
+use crate::{day_solution::DaySolution, read_input::read_input};
 use anyhow::Result;
 use std::{cmp::Ordering, ops::Range};
 
@@ -14,46 +14,90 @@ struct Symbol {
     column: usize,
 }
 
-pub fn first_part() -> Result<()> {
-    let input = read_input("day3")?;
-    let mut numbers = vec![];
-    let mut symbols = vec![];
-    for (row, line) in input.enumerate() {
-        let line = line?;
-        let mut number = None;
-        let mut row_symbols = vec![];
-        for (column, char) in line.chars().enumerate() {
-            if let Some(digit) = char.to_digit(10) {
-                number = Some(number.map(|n| n * 10).unwrap_or(0) + digit);
-                continue;
+pub struct ThirdDaySolution;
+
+impl DaySolution for ThirdDaySolution {
+    fn first_part() -> Result<String> {
+        let input = read_input("day3")?;
+        let mut numbers = vec![];
+        let mut symbols = vec![];
+        for (row, line) in input.enumerate() {
+            let line = line?;
+            let mut number = None;
+            let mut row_symbols = vec![];
+            for (column, char) in line.chars().enumerate() {
+                if let Some(digit) = char.to_digit(10) {
+                    number = Some(number.map(|n| n * 10).unwrap_or(0) + digit);
+                    continue;
+                }
+                if let Some(n) = number {
+                    let start = column - n.ilog10() as usize;
+                    numbers.push(Number {
+                        number: n,
+                        row,
+                        colums: start.saturating_sub(2)..column + 1,
+                    });
+                    number = None;
+                }
+                if char != '.' {
+                    row_symbols.push(Symbol { column })
+                }
             }
             if let Some(n) = number {
+                let column = line.len();
                 let start = column - n.ilog10() as usize;
                 numbers.push(Number {
                     number: n,
                     row,
                     colums: start.saturating_sub(2)..column + 1,
                 });
-                number = None;
             }
-            if char != '.' {
-                row_symbols.push(Symbol { column })
-            }
+            symbols.push(row_symbols);
         }
-        if let Some(n) = number {
-            let column = line.len();
-            let start = column - n.ilog10() as usize;
-            numbers.push(Number {
-                number: n,
-                row,
-                colums: start.saturating_sub(2)..column + 1,
-            });
-        }
-        symbols.push(row_symbols);
+        let sum = sum_of_numbers_adjustent_to_symbol(&numbers, &symbols);
+        Ok(format!("Sum: {sum}"))
     }
-    let sum = sum_of_numbers_adjustent_to_symbol(&numbers, &symbols);
-    println!("Sum: {sum}");
-    Ok(())
+
+    fn second_part() -> Result<String> {
+        let input = read_input("day3")?;
+        let mut numbers = vec![];
+        let mut gears = vec![];
+        for (row, line) in input.enumerate() {
+            let line = line?;
+            let mut number = None;
+            let mut row_numbers = vec![];
+            for (column, char) in line.chars().enumerate() {
+                if let Some(digit) = char.to_digit(10) {
+                    number = Some(number.map(|n| n * 10).unwrap_or(0) + digit);
+                    continue;
+                }
+                if let Some(n) = number {
+                    let start = column - n.ilog10() as usize;
+                    row_numbers.push(Number {
+                        number: n,
+                        row,
+                        colums: start.saturating_sub(2)..column + 1,
+                    });
+                    number = None;
+                }
+                if char == '*' {
+                    gears.push(Gear { column, row })
+                }
+            }
+            if let Some(n) = number {
+                let column = line.len();
+                let start = column - n.ilog10() as usize;
+                row_numbers.push(Number {
+                    number: n,
+                    row,
+                    colums: start.saturating_sub(2)..column + 1,
+                });
+            }
+            numbers.push(row_numbers);
+        }
+        let sum = gear_ratios(&numbers, &gears);
+        Ok(format!("Ratios: {sum}"))
+    }
 }
 
 fn sum_of_numbers_adjustent_to_symbol(numbers: &[Number], symbols: &[Vec<Symbol>]) -> u32 {
@@ -91,48 +135,6 @@ fn compare(number: &Number, symbol: &Symbol) -> Ordering {
 struct Gear {
     column: usize,
     row: usize,
-}
-
-pub fn second_part() -> Result<()> {
-    let input = read_input("day3")?;
-    let mut numbers = vec![];
-    let mut gears = vec![];
-    for (row, line) in input.enumerate() {
-        let line = line?;
-        let mut number = None;
-        let mut row_numbers = vec![];
-        for (column, char) in line.chars().enumerate() {
-            if let Some(digit) = char.to_digit(10) {
-                number = Some(number.map(|n| n * 10).unwrap_or(0) + digit);
-                continue;
-            }
-            if let Some(n) = number {
-                let start = column - n.ilog10() as usize;
-                row_numbers.push(Number {
-                    number: n,
-                    row,
-                    colums: start.saturating_sub(2)..column + 1,
-                });
-                number = None;
-            }
-            if char == '*' {
-                gears.push(Gear { column, row })
-            }
-        }
-        if let Some(n) = number {
-            let column = line.len();
-            let start = column - n.ilog10() as usize;
-            row_numbers.push(Number {
-                number: n,
-                row,
-                colums: start.saturating_sub(2)..column + 1,
-            });
-        }
-        numbers.push(row_numbers);
-    }
-    let sum = gear_ratios(&numbers, &gears);
-    println!("Ratios: {sum}");
-    Ok(())
 }
 
 fn gear_ratios(numbers: &[Vec<Number>], gears: &[Gear]) -> usize {

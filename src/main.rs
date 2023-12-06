@@ -1,11 +1,22 @@
+use anyhow::Result;
+use day1::FirstDaySolution;
+use day2::SecondDaySolution;
+use day3::ThirdDaySolution;
+use day4::FourthDaySolution;
+use day5::FifthDaySolution;
+use day6::SixDaySolution;
+use day_solution::DaySolution;
+
 mod day1;
 mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
+mod day_solution;
 mod read_input;
 
-fn main() -> anyhow::Result<()> {
+fn main() -> Result<()> {
     let challenge_day = std::env::args()
         .nth(1)
         .expect("Usage: <challenge day> <challenge part>");
@@ -14,17 +25,23 @@ fn main() -> anyhow::Result<()> {
         .nth(2)
         .expect("Usage: <challenge day> <challenge part>");
 
-    match (challenge_day.as_str(), challenge_part.as_str()) {
-        ("1", "1") => day1::first_part(),
-        ("1", "2") => day1::second_part(),
-        ("2", "1") => day2::first_part(),
-        ("2", "2") => day2::second_part(),
-        ("3", "1") => day3::first_part(),
-        ("3", "2") => day3::second_part(),
-        ("4", "1") => day4::first_part(),
-        ("4", "2") => day4::second_part(),
-        ("5", "1") => day5::first_part(),
-        ("5", "2") => day5::second_part(),
-        _ => panic!("Challge was not done yet!"),
+    match challenge_day.as_str() {
+        "1" => handle_solution::<FirstDaySolution>(challenge_part.as_str()),
+        "2" => handle_solution::<SecondDaySolution>(challenge_part.as_str()),
+        "3" => handle_solution::<ThirdDaySolution>(challenge_part.as_str()),
+        "4" => handle_solution::<FourthDaySolution>(challenge_part.as_str()),
+        "5" => handle_solution::<FifthDaySolution>(challenge_part.as_str()),
+        "6" => handle_solution::<SixDaySolution>(challenge_part.as_str()),
+        _ => panic!("Solution not done yet."),
     }
+}
+
+fn handle_solution<S: DaySolution>(part: &str) -> Result<()> {
+    let result = match part {
+        "1" => S::first_part(),
+        "2" => S::second_part(),
+        _ => panic!("Each challenge has only two parts."),
+    }?;
+    println!("{result}");
+    Ok(())
 }

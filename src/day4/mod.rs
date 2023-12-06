@@ -1,4 +1,4 @@
-use crate::read_input::read_input;
+use crate::{day_solution::DaySolution, read_input::read_input};
 use anyhow::Result;
 use std::collections::HashSet;
 
@@ -29,6 +29,31 @@ impl Card {
     }
 }
 
+pub struct FourthDaySolution;
+
+impl DaySolution for FourthDaySolution {
+    fn first_part() -> Result<String> {
+        let input = read_input("day4")?;
+        let score = input
+            .map(|l| Card::from(l.unwrap().as_str()))
+            .fold(0, |acc, card| acc + card.score());
+        Ok(format!("Score: {score}"))
+    }
+
+    fn second_part() -> Result<String> {
+        let input = read_input("day4")?;
+        let cards = input
+            .map(|l| Card::from(l.unwrap().as_str()))
+            .collect::<Vec<_>>();
+        let mut counts = vec![1; cards.len()];
+        cards
+            .iter()
+            .for_each(|c| c.count_copies(&cards, &mut counts));
+        let sum: u32 = counts.into_iter().sum();
+        Ok(format!("Sum: {sum}"))
+    }
+}
+
 impl From<&str> for Card {
     fn from(value: &str) -> Self {
         let (header, card) = value.split_once(": ").unwrap();
@@ -52,27 +77,4 @@ impl From<&str> for Card {
             match_count,
         }
     }
-}
-
-pub fn first_part() -> Result<()> {
-    let input = read_input("day4")?;
-    let score = input
-        .map(|l| Card::from(l.unwrap().as_str()))
-        .fold(0, |acc, card| acc + card.score());
-    println!("Score: {score}");
-    Ok(())
-}
-
-pub fn second_part() -> Result<()> {
-    let input = read_input("day4")?;
-    let cards = input
-        .map(|l| Card::from(l.unwrap().as_str()))
-        .collect::<Vec<_>>();
-    let mut counts = vec![1; cards.len()];
-    cards
-        .iter()
-        .for_each(|c| c.count_copies(&cards, &mut counts));
-    let sum: u32 = counts.into_iter().sum();
-    println!("Sum: {sum}");
-    Ok(())
 }

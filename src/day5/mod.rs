@@ -1,6 +1,56 @@
-use crate::read_input::read_input;
+use crate::{day_solution::DaySolution, read_input::read_input};
 use anyhow::Result;
 use std::ops::Range;
+
+pub struct FifthDaySolution;
+
+impl DaySolution for FifthDaySolution {
+    fn first_part() -> Result<String> {
+        let input = read_input("day5")?;
+        let mut lines = input.map(|l| l.unwrap());
+        let seeds_line = lines.next().unwrap();
+        let seeds = seeds_line.split_once(": ").unwrap().1;
+        let seeds = seeds
+            .split_whitespace()
+            .map(|s| s.parse::<usize>().unwrap())
+            .map(|s| Range {
+                start: s,
+                end: s + 1,
+            })
+            .collect::<Vec<_>>();
+
+        let seeds = Seeds(seeds);
+        lines.next();
+        let min_location = seeds.min_location(lines);
+        Ok(format!("Min location: {min_location}"))
+    }
+
+    fn second_part() -> Result<String> {
+        let input = read_input("day5")?;
+        let mut lines = input.map(|l| l.unwrap());
+        let seeds_line = lines.next().unwrap();
+        let mut seeds_nums = seeds_line
+            .split_once(": ")
+            .unwrap()
+            .1
+            .split_whitespace()
+            .map(|s| s.parse::<usize>().unwrap());
+
+        let mut seeds = Vec::new();
+        while let Some(start) = seeds_nums.next() {
+            let length = seeds_nums.next().unwrap();
+            seeds.push(Range {
+                start,
+                end: start + length,
+            });
+        }
+        let seeds = Seeds(seeds);
+
+        lines.next();
+        let min_location = seeds.min_location(lines);
+        Ok(format!("Min location: {min_location}"))
+    }
+}
 
 #[derive(Eq, Debug)]
 struct Ranges {
@@ -153,54 +203,4 @@ impl Seeds {
             .min()
             .unwrap()
     }
-}
-
-pub fn first_part() -> Result<()> {
-    let input = read_input("day5")?;
-    let mut lines = input.map(|l| l.unwrap());
-    let seeds_line = lines.next().unwrap();
-    let seeds = seeds_line.split_once(": ").unwrap().1;
-    let seeds = seeds
-        .split_whitespace()
-        .map(|s| s.parse::<usize>().unwrap())
-        .map(|s| Range {
-            start: s,
-            end: s + 1,
-        })
-        .collect::<Vec<_>>();
-
-    let seeds = Seeds(seeds);
-    lines.next();
-    let min_location = seeds.min_location(lines);
-
-    println!("Min location: {min_location}");
-    Ok(())
-}
-
-pub fn second_part() -> Result<()> {
-    let input = read_input("day5")?;
-    let mut lines = input.map(|l| l.unwrap());
-    let seeds_line = lines.next().unwrap();
-    let mut seeds_nums = seeds_line
-        .split_once(": ")
-        .unwrap()
-        .1
-        .split_whitespace()
-        .map(|s| s.parse::<usize>().unwrap());
-
-    let mut seeds = Vec::new();
-    while let Some(start) = seeds_nums.next() {
-        let length = seeds_nums.next().unwrap();
-        seeds.push(Range {
-            start,
-            end: start + length,
-        });
-    }
-    let seeds = Seeds(seeds);
-
-    lines.next();
-    let min_location = seeds.min_location(lines);
-
-    println!("Min location: {min_location}");
-    Ok(())
 }
