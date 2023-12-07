@@ -5,6 +5,7 @@ use day3::ThirdDaySolution;
 use day4::FourthDaySolution;
 use day5::FifthDaySolution;
 use day6::SixDaySolution;
+use day7::SeventhDaySolution;
 use day_solution::DaySolution;
 
 mod day1;
@@ -13,6 +14,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 mod day_solution;
 mod read_input;
 
@@ -32,6 +34,7 @@ fn main() -> Result<()> {
         "4" => handle_solution::<FourthDaySolution>(challenge_part.as_str()),
         "5" => handle_solution::<FifthDaySolution>(challenge_part.as_str()),
         "6" => handle_solution::<SixDaySolution>(challenge_part.as_str()),
+        "7" => handle_solution::<SeventhDaySolution>(challenge_part.as_str()),
         _ => panic!("Solution not done yet."),
     }
 }
